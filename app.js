@@ -407,9 +407,12 @@ function drawHexagonShape(context, width, height) {
 }
 
 function redrawCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const container = canvas.parentElement;
+    if (!container) return;
 
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();
