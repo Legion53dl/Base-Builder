@@ -5,39 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dune: Awakening Base Planner</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden; /* Prevents scrollbars from body */
-        }
-        h1, #toolbar {
-            flex-shrink: 0; /* Prevent these from shrinking */
-            padding: 0 10px;
-        }
-        #main-container {
-            display: flex;
-            flex-grow: 1; /* Take up remaining vertical space */
-            overflow: hidden; /* Important for child scrolling */
-        }
-        #sidebar {
-            width: 250px;
-            flex-shrink: 0;
-            padding: 10px;
-            overflow-y: auto; /* Allow sidebar to scroll if content overflows */
-            border-right: 2px solid #ccc;
-        }
-        #canvas-container {
-            flex-grow: 1; /* Take up remaining horizontal space */
-            position: relative;
-        }
-        #baseCanvas {
-            display: block; /* Removes bottom margin/space */
-        }
-    </style>
 </head>
 <body>
     <h1>Dune: Awakening Base Planner</h1>

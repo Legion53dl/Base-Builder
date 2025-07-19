@@ -413,6 +413,8 @@ function redrawCanvas() {
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
     
+    console.log(`Canvas container size: ${canvas.width}w x ${canvas.height}h`);
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.save();

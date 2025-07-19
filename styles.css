@@ -1,18 +1,30 @@
+/* General Layout & Theme */
 body {
-    background-color: #1a1a1a;
-    color: #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     font-family: sans-serif;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden; /* Prevents scrollbars from body */
+    background-color: #1a1a1a;
+    color: #f0f0f0;
 }
 
+h1 {
+    flex-shrink: 0;
+    padding: 0 10px;
+    text-align: center;
+}
+
+/* Toolbar */
 #toolbar {
+    flex-shrink: 0;
+    padding: 0 10px;
     margin: 10px 0;
     display: flex;
     gap: 30px;
     align-items: center;
+    justify-content: center;
 }
 
 .toolbar-group {
@@ -48,22 +60,24 @@ body {
     text-align: center;
 }
 
+/* Main Content Area */
 #main-container {
     display: flex;
-    flex-direction: row;
-    gap: 20px;
+    flex-grow: 1; /* Take up remaining vertical space */
+    overflow: hidden; /* Important for child scrolling */
 }
 
+/* Sidebar */
 #sidebar {
-    width: 200px;
-    background-color: #2c2c2c;
-    border: 1px solid #444;
+    width: 250px;
+    flex-shrink: 0;
     padding: 10px;
-    max-height: 800px;
-    overflow-y: auto;
+    overflow-y: auto; /* Allow sidebar to scroll if content overflows */
+    background-color: #2c2c2c;
+    border-right: 2px solid #444;
 }
 
-#sidebar h2 {
+#sidebar h2, #sidebar h4 {
     text-align: center;
     margin-top: 0;
 }
@@ -72,7 +86,7 @@ body {
     border-color: #444;
 }
 
-#standard-pieces.locked {
+#piece-list.locked {
     opacity: 0.4;
     pointer-events: none;
 }
@@ -85,6 +99,7 @@ body {
     font-weight: bold;
     color: black;
     border: 2px solid transparent;
+    border-radius: 4px;
 }
 
 .sidebar-piece.selected {
@@ -107,20 +122,61 @@ body {
 [data-piece-type="harkonnen_center_column"],
 [data-piece-type="harkonnen_corner_column"],
 [data-piece-type="harkonnen_door"],
-[data-piece-type="harkonnen_wall_quarter"] {
+[data-piece-type="harkonnen_wall_quarter"],
+[data-piece-type="harkonnen_window_wall"] {
     background-color: darkgrey;
 }
 
 [data-piece-type="sub_fief"],
 [data-piece-type="advanced_sub_fief"] {
-    background-color: #6a5acd; /* Slate Blue */
+    background-color: #6a5acd;
 }
 
-[data-piece-type="stairs"] {
+[data-piece-type="stairs"],
+[data-piece-type="harkonnen_half_stairs"] {
     background-color: sienna;
 }
 
-#baseCanvas {
+/* Canvas Area */
+#canvas-container {
+    flex-grow: 1; /* Take up remaining horizontal space */
+    position: relative;
     background-color: #2a2a2a;
-    border: 1px solid #444;
+}
+
+#baseCanvas {
+    display: block; /* Removes bottom margin/space */
+}
+
+/* Filter buttons & Search */
+#faction-filters, #type-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.filter-btn {
+    padding: 5px 10px;
+    border: 1px solid #555;
+    background-color: #3a3a3a;
+    color: #f0f0f0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.filter-btn.active {
+    background-color: #6a5acd;
+    border-color: #887ad9;
+}
+
+#search-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    background-color: #3a3a3a;
+    border: 1px solid #555;
+    color: #f0f0f0;
+    border-radius: 5px;
 }
