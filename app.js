@@ -455,10 +455,10 @@ function createNewPiece(type, x, y, rotation = 0) {
     saveStateForUndo();
     const template = pieceCatalog[type];
     if (!template) return;
-    const piece = { id: Date.now(), type, rotation, x, y, width: template.gridWidth * gridSize, height: template.gridHeight * gridSize, color: template.color, homeGridX: 0, homeGridY: 0, };
-    piece.x = x; piece.y = y;
-    piece.homeGridX = Math.floor((piece.x + piece.width / 2) / gridSize) * gridSize;
-    piece.homeGridY = Math.floor((piece.y + piece.height / 2) / gridSize) * gridSize;
+    const piece = { id: Date.now(), type, rotation, x, y, width: template.gridWidth * gridSize, height: template.gridHeight * gridSize, color: template.color };
+    const snappedPos = getSnappedPosition(type, x, y, rotation);
+    piece.x = snappedPos.x;
+    piece.y = snappedPos.y;
     
     if (rotation === 90 || rotation === 270) {
         if (template.gridWidth !== template.gridHeight) {
@@ -472,8 +472,10 @@ function createNewPiece(type, x, y, rotation = 0) {
         const borderSize = (type === 'sub_fief') ? 5 : 11;
         const borderWidth = borderSize * gridSize; const borderHeight = borderSize * gridSize;
         let epicenterX, epicenterY;
-        if (borderSize % 2 !== 0) { epicenterX = piece.homeGridX + gridSize / 2; epicenterY = piece.homeGridY + gridSize / 2; }
-        else { epicenterX = piece.homeGridX; epicenterY = piece.homeGridY; }
+        // The original code used piece.homeGridX and piece.homeGridY here, which are no longer set.
+        // We need to calculate the epicenter based on the snapped piece.x and piece.y
+        if (borderSize % 2 !== 0) { epicenterX = piece.x + piece.width / 2; epicenterY = piece.y + piece.height / 2; }
+        else { epicenterX = piece.x + piece.width / 2; epicenterY = piece.y + piece.height / 2; }
         const border = { x: epicenterX - borderWidth / 2, y: epicenterY - borderHeight / 2, width: borderWidth, height: borderHeight, color: 'darkblue', ownerId: piece.id };
         bordersByLevel[currentLevel].push(border);
 
@@ -483,22 +485,38 @@ function createNewPiece(type, x, y, rotation = 0) {
 }
 
 // --- Helpers ---
-function getSnappedPosition(piece) {
-    const template = pieceCatalog[piece.type];
-    let pieceWidth = template.gridWidth * gridSize;
-    let pieceHeight = template.gridHeight * gridSize;
+function getSnappedPosition(pieceType, worldX, worldY, rotation) {
+    const template = pieceCatalog[pieceType];
+    let snappedX, snappedY;
 
-    if (piece.rotation === 90 || piece.rotation === 270) {
-        [pieceWidth, pieceHeight] = [pieceHeight, pieceWidth];
+    const isWall = template.type === 'Walls';
+
+    let currentPieceWidth = template.gridWidth * gridSize;
+    let currentPieceHeight = template.gridHeight * gridSize;
+
+    if (rotation === 90 || rotation === 270) {
+        [currentPieceWidth, currentPieceHeight] = [currentPieceHeight, currentPieceWidth];
     }
 
-    const centerX = piece.homeGridX + gridSize / 2;
-    const centerY = piece.homeGridY + gridSize / 2;
+    if (isWall) {
+        // For walls, snap their center to the grid lines
+        // If horizontal wall (0 or 180 rotation)
+        if (rotation === 0 || rotation === 180) {
+            snappedX = Math.round(worldX / gridSize) * gridSize;
+            snappedY = Math.round(worldY / gridSize) * gridSize - (currentPieceHeight / 2);
+        }
+        // If vertical wall (90 or 270 rotation)
+        else { // rotation === 90 || rotation === 270
+            snappedX = Math.round(worldX / gridSize) * gridSize - (currentPieceWidth / 2);
+            snappedY = Math.round(worldY / gridSize) * gridSize;
+        }
+    } else {
+        // For other pieces, snap their top-left corner to the nearest grid intersection
+        snappedX = Math.round(worldX / gridSize) * gridSize;
+        snappedY = Math.round(worldY / gridSize) * gridSize;
+    }
 
-    return {
-        x: centerX - pieceWidth / 2,
-        y: centerY - pieceHeight / 2
-    };
+    return { x: snappedX, y: snappedY };
 }
 
 function isPointInPiece(point, piece) {
@@ -525,7 +543,7 @@ allSidebarPieces.forEach(elem => {
         } else {
             placingPieceType = pieceType;
             const template = pieceCatalog[placingPieceType];
-            ghostPiece = { type: placingPieceType, rotation: 0, width: template.gridWidth * gridSize, height: template.gridHeight * gridSize, x: -100, y: -100, homeGridX: 0, homeGridY: 0, visible: true };
+            ghostPiece = { type: placingPieceType, rotation: 0, width: template.gridWidth * gridSize, height: template.gridHeight * gridSize, x: -100, y: -100, visible: true };
         }
         updateSidebarSelection();
         redrawCanvas();
@@ -572,12 +590,7 @@ canvas.addEventListener('mousemove', (e) => {
     const worldY = (e.offsetY - cameraOffset.y) / cameraZoom;
 
     if (ghostPiece && placingPieceType) {
-        ghostPiece.rawMouseX = worldX;
-        ghostPiece.rawMouseY = worldY;
-        ghostPiece.homeGridX = Math.floor(worldX / gridSize) * gridSize;
-        ghostPiece.homeGridY = Math.floor(worldY / gridSize) * gridSize;
-
-        const snappedPos = getSnappedPosition(ghostPiece);
+        const snappedPos = getSnappedPosition(placingPieceType, worldX, worldY, ghostPiece.rotation);
         ghostPiece.x = snappedPos.x;
         ghostPiece.y = snappedPos.y;
         redrawCanvas();
@@ -631,9 +644,7 @@ canvas.addEventListener('mouseup', (e) => {
     if (selectedPiece) {
         const worldX = (e.offsetX - cameraOffset.x) / cameraZoom;
         const worldY = (e.offsetY - cameraOffset.y) / cameraZoom;
-        selectedPiece.homeGridX = Math.floor(worldX / gridSize) * gridSize;
-        selectedPiece.homeGridY = Math.floor(worldY / gridSize) * gridSize;
-        const snappedPos = getSnappedPosition(selectedPiece);
+        const snappedPos = getSnappedPosition(selectedPiece.type, worldX, worldY, selectedPiece.rotation);
         selectedPiece.x = snappedPos.x;
         selectedPiece.y = snappedPos.y;
         redrawCanvas();
@@ -665,7 +676,7 @@ document.addEventListener('keydown', (e) => {
         if (template.gridWidth !== template.gridHeight) {
             [ghostPiece.width, ghostPiece.height] = [ghostPiece.height, ghostPiece.width];
         }
-        const snappedPos = getSnappedPosition(ghostPiece);
+        const snappedPos = getSnappedPosition(ghostPiece.type, ghostPiece.rawMouseX, ghostPiece.rawMouseY, ghostPiece.rotation);
         ghostPiece.x = snappedPos.x;
         ghostPiece.y = snappedPos.y;
         redrawCanvas();
@@ -684,7 +695,7 @@ document.addEventListener('keydown', (e) => {
         if (template.gridWidth !== template.gridHeight) {
             [selectedPiece.width, selectedPiece.height] = [selectedPiece.height, selectedPiece.width];
         }
-        const snappedPos = getSnappedPosition(selectedPiece);
+        const snappedPos = getSnappedPosition(selectedPiece.type, selectedPiece.x, selectedPiece.y, selectedPiece.rotation);
         selectedPiece.x = snappedPos.x;
         selectedPiece.y = snappedPos.y;
     }
