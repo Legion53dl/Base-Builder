@@ -17,6 +17,10 @@
             <button id="export-btn">Export</button>
         </div>
         <div class="toolbar-group">
+            <button id="undo-btn">Undo</button>
+            <button id="redo-btn">Redo</button>
+        </div>
+        <div class="toolbar-group">
             <button id="level-down-btn">&lt; Level Down</button>
             <span id="level-display">Level 0</span>
             <button id="level-up-btn">Level Up &gt;</button>
@@ -26,6 +30,24 @@
     <div id="main-container">
         <div id="sidebar">
             <h2>Building Pieces</h2>
+
+            <input type="text" id="search-input" placeholder="Search pieces...">
+
+            <h4>Faction</h4>
+            <div id="faction-filters">
+                <button class="filter-btn active" data-faction="General">General</button>
+                <button class="filter-btn" data-faction="Harkonnen">Harkonnen</button>
+            </div>
+
+            <h4>Type</h4>
+            <div id="type-filters">
+                <button class="filter-btn active" data-type="All">All</button>
+                <button class="filter-btn" data-type="Structural">Structural</button>
+                <button class="filter-btn" data-type="Walls">Walls</button>
+                <button class="filter-btn" data-type="Inclines">Inclines</button>
+                <button class="filter-btn" data-type="Special">Special</button>
+            </div>
+
             
             <div id="fief-pieces">
                 <div class="sidebar-piece" data-piece-type="sub_fief">
@@ -38,7 +60,7 @@
 
             <hr>
 
-            <div id="standard-pieces">
+            <div id="piece-list">
                 <div class="sidebar-piece" data-piece-type="foundation">
                     1x1 Foundation
                 </div>
