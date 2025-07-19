@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dune: Awakening Base Planner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Dune: Awakening Base Planner</h1>
+
+    <div id="toolbar">
+        <div class="toolbar-group">
+            <button id="save-btn">Save</button>
+            <button id="load-btn">Load</button>
+            <button id="clear-btn">Clear</button>
+            <button id="export-btn">Export</button>
+        </div>
+        <div class="toolbar-group">
+            <button id="level-down-btn">&lt; Level Down</button>
+            <span id="level-display">Level 0</span>
+            <button id="level-up-btn">Level Up &gt;</button>
+        </div>
+    </div>
+
+    <div id="main-container">
+        <div id="sidebar">
+            <h2>Building Pieces</h2>
+            
+            <div id="fief-pieces">
+                <div class="sidebar-piece" data-piece-type="sub_fief">
+                    Sub Fief
+                </div>
+                <div class="sidebar-piece" data-piece-type="advanced_sub_fief">
+                    Advanced Sub Fief
+                </div>
+            </div>
+
+            <hr>
+
+            <div id="standard-pieces">
+                <div class="sidebar-piece" data-piece-type="foundation">
+                    1x1 Foundation
+                </div>
+                <div class="sidebar-piece" data-piece-type="harkonnen_floor_quarter">
+                    Harkonnen Rounded Floor
+                </div>
+                <div class="sidebar-piece" data-piece-type="harkonnen_floor_triangle">
+                    Harkonnen Triangle Floor
+                </div>
+                <div class="sidebar-piece" data-piece-type="wall">
+                    1x1 Wall
+                </div>
+                <div class="sidebar-piece" data-piece-type="harkonnen_wall_quarter">
+                    Harkonnen Rounded Wall
+                </div>
+                <div class="sidebar-piece" data-piece-type="harkonnen_door">
+                    Harkonnen Door
+                </div>
+                <div class="sidebar-piece" data-piece-type="harkonnen_center_column">
+                    Harkonnen Centre Column
+                </div>
+                <div class="sidebar-piece" data-piece-type="harkonnen_corner_column">
+                    Harkonnen Corner Column
+                </div>
+                <div class="sidebar-piece" data-piece-type="stairs">
+                    1x2 Stairs
+                </div>
+            </div>
+        </div>
+        <canvas id="baseCanvas" width="1000" height="800"></canvas>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
