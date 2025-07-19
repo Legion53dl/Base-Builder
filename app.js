@@ -93,6 +93,7 @@ undoBtn.addEventListener('click', () => {
         updateSidebarSelection();
         updateLevelDisplay();
         updateUndoRedoButtons();
+        redrawCanvas();
     }
 });
 
@@ -118,6 +119,7 @@ redoBtn.addEventListener('click', () => {
         updateSidebarSelection();
         updateLevelDisplay();
         updateUndoRedoButtons();
+        redrawCanvas();
     }
 });
 
@@ -230,7 +232,9 @@ loadBtn.addEventListener('click', () => {
         initializeLevels();
         if (layout.pieces) {
             Object.assign(piecesByLevel, layout.pieces);
-            Object.assign(bordersByLevel, layout.borders);
+            if (layout.borders) {
+                Object.assign(bordersByLevel, layout.borders);
+            }
             isBaseStarted = layout.baseStarted || false;
         } else {
             piecesByLevel[0] = layout;
