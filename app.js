@@ -473,6 +473,39 @@ function createNewPiece(type, x, y, rotation = 0) {
     redrawCanvas();
 }
 
+// --- Helpers ---
+function getSnappedPosition(piece) {
+    const template = pieceCatalog[piece.type];
+    let pieceWidth = template.gridWidth * gridSize;
+    let pieceHeight = template.gridHeight * gridSize;
+
+    if (piece.rotation === 90 || piece.rotation === 270) {
+        [pieceWidth, pieceHeight] = [pieceHeight, pieceWidth];
+    }
+
+    const centerX = piece.homeGridX + gridSize / 2;
+    const centerY = piece.homeGridY + gridSize / 2;
+
+    return {
+        x: centerX - pieceWidth / 2,
+        y: centerY - pieceHeight / 2
+    };
+}
+
+function isPointInPiece(point, piece) {
+    const template = pieceCatalog[piece.type];
+    const centerX = piece.x + piece.width / 2;
+    const centerY = piece.y + piece.height / 2;
+    const angle = -piece.rotation * Math.PI / 180;
+    const dx = point.x - centerX;
+    const dy = point.y - centerY;
+    const rotatedX = dx * Math.cos(angle) - dy * Math.sin(angle);
+    const rotatedY = dx * Math.sin(angle) + dy * Math.cos(angle);
+    const baseWidth = template.gridWidth * gridSize;
+    const baseHeight = template.gridHeight * gridSize;
+    return Math.abs(rotatedX) <= baseWidth / 2 && Math.abs(rotatedY) <= baseHeight / 2;
+}
+
 // --- Event Handlers ---
 
 allSidebarPieces.forEach(elem => {
@@ -563,7 +596,7 @@ canvas.addEventListener('mousedown', (e) => {
 
     for (let i = piecesByLevel[currentLevel].length - 1; i >= 0; i--) {
         const piece = piecesByLevel[currentLevel][i];
-        if (worldX >= piece.x && worldX <= piece.x + piece.width && worldY >= piece.y && worldY <= piece.y + piece.height) {
+        if (isPointInPiece({ x: worldX, y: worldY }, piece)) {
             clickedPiece = piece;
             break;
         }
