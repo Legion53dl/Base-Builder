@@ -2,10 +2,6 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"name": "Base-Builder",
-			"path": "Base-Builder"
 		}
 	],
 	"settings": {}

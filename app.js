@@ -17,7 +17,15 @@ const pieceCatalog = {
     sub_fief: { gridWidth: 0.5, gridHeight: 0.5, color: '#6a5acd', shape: 'circle', faction: 'General', type: 'Special' },
     advanced_sub_fief: { gridWidth: 0.5, gridHeight: 0.5, color: '#6a5acd', shape: 'circle', faction: 'General', type: 'Special' },
     stairs: { gridWidth: 1, gridHeight: 2, color: 'sienna', faction: 'General', type: 'Inclines' },
-    harkonnen_half_stairs: { gridWidth: 1, gridHeight: 1, color: 'sienna', faction: 'Harkonnen', type: 'Inclines' }
+    harkonnen_half_stairs: { gridWidth: 1, gridHeight: 1, color: 'sienna', faction: 'Harkonnen', type: 'Inclines' },
+    atreides_floor_quarter: { gridWidth: 1, gridHeight: 1, color: 'sandybrown', faction: 'Atreides', type: 'Structural' },
+    atreides_floor_triangle: { gridWidth: 1, gridHeight: 1, color: 'sandybrown', faction: 'Atreides', type: 'Structural' },
+    atreides_wall_quarter: { gridWidth: 1, gridHeight: 1, color: '#006400', faction: 'Atreides', type: 'Walls' },
+    atreides_window_wall: { gridWidth: 1, gridHeight: 0.2, color: '#006400', faction: 'Atreides', type: 'Walls' },
+    atreides_door: { gridWidth: 1, gridHeight: 0.2, color: '#006400', faction: 'Atreides', type: 'Walls' },
+    atreides_center_column: { gridWidth: 0.5, gridHeight: 0.5, color: '#006400', shape: 'hexagon', faction: 'Atreides', type: 'Structural' },
+    atreides_corner_column: { gridWidth: 0.5, gridHeight: 0.5, color: '#006400', shape: 'hexagon', faction: 'Atreides', type: 'Structural' },
+    atreides_half_stairs: { gridWidth: 1, gridHeight: 1, color: 'sienna', faction: 'Atreides', type: 'Inclines' }
 };
 
 // --- State ---
@@ -351,25 +359,25 @@ function drawPieceShape(context, piece, width, height, isGhost) {
     }
 
     let isDrawn = false;
-    if (piece.type === 'harkonnen_floor_quarter') {
+    if (piece.type === 'harkonnen_floor_quarter' || piece.type === 'atreides_floor_quarter') {
         context.beginPath(); context.moveTo(width / 2, height / 2); context.arc(width / 2, height / 2, width, Math.PI, 1.5 * Math.PI); context.closePath(); context.fill(); context.stroke(); isDrawn = true;
-    } else if (piece.type === 'harkonnen_floor_triangle') {
+    } else if (piece.type === 'harkonnen_floor_triangle' || piece.type === 'atreides_floor_triangle') {
         context.beginPath(); context.moveTo(-width / 2, -height / 2); context.lineTo(width / 2, -height / 2); context.lineTo(0, 0); context.closePath(); context.fill(); context.stroke(); isDrawn = true;
-    } else if (piece.type === 'harkonnen_door') {
+    } else if (piece.type === 'harkonnen_door' || piece.type === 'atreides_door') {
         const doorWidth = width * 0.4; const wallSegmentWidth = (width - doorWidth) / 2;
         context.fillRect(-width / 2, -height / 2, wallSegmentWidth, height); context.strokeRect(-width / 2, -height / 2, wallSegmentWidth, height);
         context.fillRect(doorWidth / 2, -height / 2, wallSegmentWidth, height); context.strokeRect(doorWidth / 2, -height / 2, wallSegmentWidth, height);
         if (!isGhost) context.fillStyle = '#add8e6'; context.fillRect(-doorWidth / 2, -height / 2, doorWidth, height); isDrawn = true;
-    } else if (piece.type === 'harkonnen_window_wall') {
+    } else if (piece.type === 'harkonnen_window_wall' || piece.type === 'atreides_window_wall') {
         context.fillRect(-width / 2, -height / 2, width, height);
         if (!isGhost) {
-            context.fillStyle = 'green';
+            context.fillStyle = 'lightblue';
             const windowWidth = width * 0.5;
             const windowHeight = height * 0.6;
             context.fillRect(-windowWidth / 2, -windowHeight / 2, windowWidth, windowHeight);
         }
         context.strokeRect(-width / 2, -height / 2, width, height); isDrawn = true;
-    } else if (piece.type === 'harkonnen_wall_quarter') {
+    } else if (piece.type === 'harkonnen_wall_quarter' || piece.type === 'atreides_wall_quarter') {
         const wallThickness = 0.2 * gridSize; context.beginPath(); context.arc(width / 2, height / 2, width, 1.5 * Math.PI, Math.PI, true); context.arc(width / 2, height / 2, width - wallThickness, Math.PI, 1.5 * Math.PI, false); context.closePath(); context.fill(); context.stroke(); isDrawn = true;
     } else if (piece.type === 'wall') {
         context.fillRect(-width / 2, -height / 2, width, height);
@@ -379,7 +387,7 @@ function drawPieceShape(context, piece, width, height, isGhost) {
             context.stroke(); context.restore();
         }
         context.strokeRect(-width / 2, -height / 2, width, height); isDrawn = true;
-    } else if (piece.type === 'stairs' || piece.type === 'harkonnen_half_stairs') {
+    } else if (piece.type === 'stairs' || piece.type === 'harkonnen_half_stairs' || piece.type === 'atreides_half_stairs') {
         context.fillRect(-width / 2, -height / 2, width, height);
         if(!isGhost) {
             context.strokeStyle = '#603813'; context.lineWidth = 2; context.beginPath(); const stepHeight = gridSize / 5;
